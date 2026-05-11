@@ -1085,7 +1085,7 @@ with tab3:
             rooms_per_household
           </div>
           <div class="code-block" style="text-align:left;font-size:0.79rem;">
-total_rooms ÷ households</div>
+avg rooms per house</div>
           <div style="font-size:0.8rem;color:#64748b;margin-top:0.6rem;">
             Captures crowding; a studio in SF vs a ranch in Fresno have very different values.
           </div>
@@ -1099,7 +1099,7 @@ total_rooms ÷ households</div>
             bedrooms_per_room
           </div>
           <div class="code-block" style="text-align:left;font-size:0.79rem;">
-total_bedrooms ÷ total_rooms</div>
+avg bedrooms ÷ avg rooms</div>
           <div style="font-size:0.8rem;color:#64748b;margin-top:0.6rem;">
             Captures unit type mix. High ratio = bedroom-heavy blocks (dorms, SROs).
           </div>
@@ -1525,21 +1525,35 @@ with tab5:
         st.markdown("""
         <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;
                     letter-spacing:1px;color:#475569;margin:0.7rem 0 0.4rem;">
-          Counts
+          Block Group Size
         </div>""", unsafe_allow_html=True)
 
         cc1, cc2 = st.columns(2)
-        total_rooms    = cc1.number_input("Total Rooms",    2,    39320, 2500, step=50)
-        total_bedrooms = cc2.number_input("Total Bedrooms", 1,     6445,  500, step=10)
-        population     = cc1.number_input("Population",    10,    35682, 1200, step=50)
-        households     = cc2.number_input("Households",     5,     6082,  400, step=10)
+        population     = cc1.number_input("Population",    10,    35682, 1200, step=50,
+                                          help="Total people living in this block group")
+        households     = cc2.number_input("Households",     5,     6082,  400, step=10,
+                                          help="Number of occupied housing units in the block group")
+
+        st.markdown("""
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;
+                    letter-spacing:1px;color:#475569;margin:0.7rem 0 0.4rem;">
+          Per-House Averages
+        </div>""", unsafe_allow_html=True)
+
+        pc1, pc2 = st.columns(2)
+        avg_rooms     = pc1.number_input("Avg Rooms per House",    1.0, 20.0, 5.0, step=0.5,
+                                         help="Average number of rooms in each housing unit (living room, bedrooms, kitchen…)")
+        avg_bedrooms  = pc2.number_input("Avg Bedrooms per House", 0.5,  6.0, 1.0, step=0.5,
+                                         help="Average number of bedrooms per housing unit")
 
     with result_col:
         # ── Feature engineering ──────────────────────────────────────────
         p99       = diagnostics.get("pop_per_hh_p99", 10.0)
         hh        = max(households, 1)
-        rooms_per_hh = total_rooms / hh
-        bed_per_room = total_bedrooms / max(total_rooms, 1)
+        rooms_per_hh = avg_rooms
+        bed_per_room = avg_bedrooms / max(avg_rooms, 0.01)
+        total_rooms    = avg_rooms * hh
+        total_bedrooms = avg_bedrooms * hh
         pop_per_hh   = min(population / hh, p99)
 
         input_dict = {
@@ -1623,8 +1637,8 @@ with tab5:
             "Feature":  ["rooms_per_household", "bedrooms_per_room", "population_per_household"],
             "Value":    [f"{rooms_per_hh:.3f}", f"{bed_per_room:.3f}", f"{pop_per_hh:.3f}"],
             "Formula":  [
-                "total_rooms ÷ households",
-                "total_bedrooms ÷ total_rooms",
+                "avg rooms per house (direct input)",
+                "avg bedrooms ÷ avg rooms",
                 f"population ÷ households  ·  winsorised at {p99:.2f}",
             ],
         })
