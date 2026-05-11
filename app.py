@@ -427,6 +427,42 @@ div[data-testid="stDataFrame"] {
     overflow: hidden !important;
 }
 .stAlert { border-radius: 10px !important; }
+
+/* ── Tab navigation ─────────────────────────────────────────────────────────── */
+.stTabs [data-testid="stTabsNavContainer"] {
+    background: rgba(12,18,32,0.9) !important;
+    border-bottom: 1px solid rgba(99,179,237,0.15) !important;
+    border-radius: 14px 14px 0 0 !important;
+    padding: 0 0.5rem !important;
+    gap: 0 !important;
+}
+.stTabs [data-baseweb="tab"] {
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    padding: 0.75rem 1.2rem !important;
+    border-radius: 10px 10px 0 0 !important;
+    transition: color 0.2s, background 0.2s !important;
+    border: none !important;
+    letter-spacing: 0.2px !important;
+}
+.stTabs [data-baseweb="tab"]:hover {
+    color: #94a3b8 !important;
+    background: rgba(99,179,237,0.06) !important;
+}
+.stTabs [aria-selected="true"] {
+    color: #63b3ed !important;
+    background: rgba(99,179,237,0.1) !important;
+    border-bottom: 2px solid #63b3ed !important;
+}
+.stTabs [data-testid="stTabContent"] {
+    padding-top: 1.5rem !important;
+}
+
+/* Hide sidebar entirely — nav is via tabs */
+[data-testid="stSidebar"] { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -519,73 +555,41 @@ best_row = rdf.iloc[0]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# SIDEBAR
+# TOP NAV — App header + tabs
 # ─────────────────────────────────────────────────────────────────────────────
-st.sidebar.markdown("""
-<div style="padding:0.5rem 0.5rem 1rem;">
-  <div style="font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;
-              color:#f1f5f9;letter-spacing:-0.3px;">Beyond Linearity</div>
-  <div style="font-family:'Space Grotesk',sans-serif;font-size:0.75rem;font-weight:600;
-              color:#63b3ed;letter-spacing:1px;text-transform:uppercase;margin-top:1px;">v2.0</div>
-  <div style="font-size:0.75rem;color:#475569;margin-top:0.4rem;line-height:1.5;">
-    California Housing · 1990 Census<br>MSc Data Science &amp; Analytics
+st.markdown(f"""
+<div style="display:flex;align-items:center;justify-content:space-between;
+            padding:0.8rem 0 1.2rem;border-bottom:1px solid rgba(99,179,237,0.12);
+            margin-bottom:1rem;">
+  <div>
+    <span style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;
+                 color:#f1f5f9;">Beyond Linearity</span>
+    <span style="font-family:'Space Grotesk',sans-serif;font-size:0.72rem;font-weight:600;
+                 color:#63b3ed;letter-spacing:1px;text-transform:uppercase;
+                 margin-left:0.5rem;">v2.0</span>
   </div>
-</div>
-<hr style="border-color:rgba(99,179,237,0.1);margin:0 0 1rem;">
-""", unsafe_allow_html=True)
-
-PAGES = [
-    "01  Overview",
-    "02  Model Leaderboard",
-    "03  Statistical Diagnostics",
-    "04  Spatial Analysis",
-    "05  Live Prediction",
-]
-page = st.sidebar.radio("Navigate", PAGES, label_visibility="collapsed")
-
-st.sidebar.markdown("<hr style='border-color:rgba(99,179,237,0.1);margin:1rem 0;'>",
-                    unsafe_allow_html=True)
-st.sidebar.markdown(f"""
-<div style="display:flex;flex-direction:column;gap:6px;padding:0 0.2rem;">
-  <div style="background:rgba(99,179,237,0.07);border:1px solid rgba(99,179,237,0.14);
-              border-radius:9px;padding:0.65rem 0.9rem;">
-    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;
-                letter-spacing:1.1px;color:#475569;margin-bottom:3px;">Best Model</div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:1rem;
-                font-weight:700;color:#f1f5f9;">{best_row['name']}</div>
-  </div>
-  <div style="background:rgba(99,179,237,0.07);border:1px solid rgba(99,179,237,0.14);
-              border-radius:9px;padding:0.65rem 0.9rem;">
-    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;
-                letter-spacing:1.1px;color:#475569;margin-bottom:3px;">Test R²</div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:1rem;
-                font-weight:700;color:#63b3ed;">{best_row['r2']:.4f}</div>
-  </div>
-  <div style="background:rgba(99,179,237,0.07);border:1px solid rgba(99,179,237,0.14);
-              border-radius:9px;padding:0.65rem 0.9rem;">
-    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;
-                letter-spacing:1.1px;color:#475569;margin-bottom:3px;">Dollar RMSE</div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:1rem;
-                font-weight:700;color:#34d399;">${best_row['rmse_dollar']:,.0f}</div>
+  <div style="display:flex;gap:1.5rem;font-size:0.78rem;color:#475569;">
+    <span>Best: <strong style="color:#63b3ed;">{best_row['name']}</strong></span>
+    <span>R² <strong style="color:#34d399;">{best_row['r2']:.4f}</strong></span>
+    <span>RMSE <strong style="color:#a78bfa;">${best_row['rmse_dollar']:,.0f}</strong></span>
+    <span style="color:#334155;">20,640 block groups · CA 1990</span>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.sidebar.markdown("<hr style='border-color:rgba(99,179,237,0.1);margin:1rem 0;'>",
-                    unsafe_allow_html=True)
-st.sidebar.markdown("""
-<div style="font-size:0.72rem;color:#334155;line-height:1.7;padding:0 0.3rem;">
-  20,640 block groups · 80/20 split<br>
-  Target censored at $500,001 (4.7%)<br>
-  Source: sklearn fetch_california_housing
-</div>
-""", unsafe_allow_html=True)
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "🏠  Overview",
+    "🏆  Model Leaderboard",
+    "🔬  Statistical Diagnostics",
+    "🗺️  Spatial Analysis",
+    "🔮  Live Prediction",
+])
 
 
 # ═════════════════════════════════════════════════════════════════════════════
 # PAGE 1 · OVERVIEW
 # ═════════════════════════════════════════════════════════════════════════════
-if page == PAGES[0]:
+with tab1:
 
     st.markdown("""
     <div class="page-hero">
@@ -832,7 +836,7 @@ if page == PAGES[0]:
 # ═════════════════════════════════════════════════════════════════════════════
 # PAGE 2 · MODEL LEADERBOARD
 # ═════════════════════════════════════════════════════════════════════════════
-elif page == PAGES[1]:
+with tab2:
 
     st.markdown("""
     <div class="page-hero">
@@ -987,7 +991,7 @@ elif page == PAGES[1]:
 # ═════════════════════════════════════════════════════════════════════════════
 # PAGE 3 · STATISTICAL DIAGNOSTICS
 # ═════════════════════════════════════════════════════════════════════════════
-elif page == PAGES[2]:
+with tab3:
 
     st.markdown("""
     <div class="page-hero">
@@ -1324,7 +1328,7 @@ min(population ÷ households,
 # ═════════════════════════════════════════════════════════════════════════════
 # PAGE 4 · SPATIAL ANALYSIS
 # ═════════════════════════════════════════════════════════════════════════════
-elif page == PAGES[3]:
+with tab4:
 
     st.markdown("""
     <div class="page-hero">
@@ -1479,7 +1483,7 @@ HIGH = &gt; 67th percentile</div>
 # ═════════════════════════════════════════════════════════════════════════════
 # PAGE 5 · LIVE PREDICTION
 # ═════════════════════════════════════════════════════════════════════════════
-elif page == PAGES[4]:
+with tab5:
 
     st.markdown(f"""
     <div class="page-hero">
