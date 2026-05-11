@@ -94,6 +94,22 @@ h3 { font-size: 1.05rem !important; color: #94a3b8 !important; }
 hr { border-color: rgba(99,179,237,0.1) !important; margin: 1.5rem 0 !important; }
 strong { color: #e2e8f0 !important; }
 
+/* ── Sidebar toggle button ──────────────────────────────────────────────────── */
+[data-testid="collapsedControl"] {
+    background: linear-gradient(135deg, #63b3ed, #a78bfa) !important;
+    border-radius: 0 10px 10px 0 !important;
+    width: 28px !important;
+    top: 50% !important;
+    color: #fff !important;
+    box-shadow: 4px 0 16px rgba(99,179,237,0.4) !important;
+}
+[data-testid="collapsedControl"] svg { fill: #fff !important; stroke: #fff !important; }
+[data-testid="stSidebarCollapseButton"] button {
+    color: #63b3ed !important;
+    background: rgba(99,179,237,0.1) !important;
+    border-radius: 8px !important;
+}
+
 /* ── Scrollbar ──────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: #0c1220; }
