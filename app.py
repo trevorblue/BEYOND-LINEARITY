@@ -52,17 +52,30 @@ html, body, [class*="css"], .stMarkdown, p, li, span {
 [data-testid="stSidebar"] .block-container {
     padding: 1.5rem 1rem !important;
 }
-[data-testid="stSidebar"] label {
+[data-testid="stSidebar"] .stRadio > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+[data-testid="stSidebar"] .stRadio label {
     font-family: 'Inter', sans-serif !important;
     font-size: 0.87rem !important;
     font-weight: 500 !important;
     color: #64748b !important;
-    padding: 0.55rem 1rem !important;
+    padding: 0.5rem 0.9rem !important;
     border-radius: 8px !important;
-    transition: all 0.2s !important;
-    display: block !important;
+    transition: background 0.2s, color 0.2s !important;
+    cursor: pointer !important;
 }
-[data-testid="stSidebar"] label:hover { background: rgba(99,179,237,0.08) !important; color: #e2e8f0 !important; }
+[data-testid="stSidebar"] .stRadio label:hover {
+    background: rgba(99,179,237,0.08) !important;
+    color: #e2e8f0 !important;
+}
+[data-testid="stSidebar"] .stRadio label[data-baseweb="radio"] { display: flex !important; }
+[data-testid="stSidebar"] .stRadio [aria-checked="true"] ~ div,
+[data-testid="stSidebar"] .stRadio [data-checked="true"] ~ div {
+    color: #63b3ed !important;
+}
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
     font-size: 0.8rem !important;
     color: #475569 !important;
