@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+*.egg-info/
+.env
+
+# Unrelated project files
+1.ipynb
+Beyond_Linearity.ipynb
+FuelConsumption.csv
+LOAN-project/
+New folder/
+Prac_2.R
+cal_housing*.data
+loan_analysis_complete.R
+loan_data.csv
